@@ -1,6 +1,7 @@
 #beginner pong using python
 import turtle
 import winsound
+import time
 
 wn = turtle.Screen()
 wn.title("pong by LunchBox")
@@ -37,8 +38,8 @@ ball.shape("square")
 ball.color("white")
 ball.penup()
 ball.goto(0, 0)
-ball.dx = 1
-ball.dy = 1
+ball.dx = 2
+ball.dy = 2
 
 # Pen
 pen = turtle.Turtle()
@@ -50,36 +51,36 @@ pen.hideturtle()
 pen.goto(0, 260)
 pen.write("Player A: 0  Player B: 0", align="center", font=("Courier", 24, "normal"))
 
-#Functions
-def paddle_a_up():
-    y = paddle_a.ycor()
-    y += 20
-    paddle_a.sety(y)
-def paddle_a_down():
-    y = paddle_a.ycor()
-    y -= 20
-    paddle_a.sety(y)
-def paddle_b_up():
-    y = paddle_b.ycor()
-    y += 20
-    paddle_b.sety(y)
-def paddle_b_down():
-    y = paddle_b.ycor()
-    y -= 20
-    paddle_b.sety(y)
+# Key state tracking
+keys = {"w": False, "s": False, "Up": False, "Down": False}
+
+def key_press(key):
+    keys[key] = True
+def key_release(key):
+    keys[key] = False
 
 #Keyboard Binding
 wn.listen()
-wn.onkeypress(paddle_a_up, "w")
-wn.onkeypress(paddle_a_down, "s")
-wn.onkeypress(paddle_b_up, "Up")
-wn.onkeypress(paddle_b_down, "Down")
+for k in keys:
+    wn.onkeypress(lambda key=k: key_press(key), k)
+    wn.onkeyrelease(lambda key=k: key_release(key), k)
 
 #main game loop
 while True:
     wn.update()
+    time.sleep(0.01)
 
-        # Move the ball
+    # Move paddles
+    if keys["w"] and paddle_a.ycor() < 250:
+        paddle_a.sety(paddle_a.ycor() + 20)
+    if keys["s"] and paddle_a.ycor() > -250:
+        paddle_a.sety(paddle_a.ycor() - 20)
+    if keys["Up"] and paddle_b.ycor() < 250:
+        paddle_b.sety(paddle_b.ycor() + 20)
+    if keys["Down"] and paddle_b.ycor() > -250:
+        paddle_b.sety(paddle_b.ycor() - 20)
+
+    # Move the ball
     ball.setx(ball.xcor() + ball.dx)
     ball.sety(ball.ycor() + ball.dy)
 
